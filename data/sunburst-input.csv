@@ -1,0 +1,24 @@
+Common Operational Datasets-Administrative boundaries-Administrative boundaries-yes,0.125
+Common Operational Datasets-Population-Population-yes,0.125
+Hazard & Exposure-Natural-Earthquake-yes,0.025
+Hazard & Exposure-Natural-Flood-yes,0.025
+Hazard & Exposure-Natural-Tsunami-yes,0.025
+Hazard & Exposure-Natural-Tropical Cyclone-yes,0.025
+Hazard & Exposure-Natural-Drought-yes,0.025
+Hazard & Exposure-Human-Projected Conflict Risk,0.0625
+Hazard & Exposure-Human-Current Highly Violent Conflict Intensity,0.0625
+Vulnerability-SocioEconomic Vulnerability-Development & Deprivation,0.0625
+Vulnerability-SocioEconomic Vulnerability-Inequality,0.03125
+Vulnerability-SocioEconomic Vulnerability-Aid Dependency,0.03125
+Vulnerability-Vulnerable Groups-Uprooted people,0.0625
+Vulnerability-Vulnerable Groups-Health Conditions,0.015625
+Vulnerability-Vulnerable Groups-Children U5,0.015625
+Vulnerability-Vulnerable Groups-Recent Shocks-yes,0.015625
+Vulnerability-Vulnerable Groups-Food Security,0.015625
+Lack of Coping Capacity-Institutional-DRR,0.0625
+Lack of Coping Capacity-Institutional-Governance-yes,0.0625
+Lack of Coping Capacity-Infrastructure-Communication,0.041666666625
+Lack of Coping Capacity-Infrastructure-Physical infrastructure-yes,0.041666666625
+Lack of Coping Capacity-Infrastructure-Access to health care-yes,0.041666666625
+
+

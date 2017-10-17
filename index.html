@@ -3,7 +3,7 @@
 <html>
 
   <head>
-    <title>Typhoon Haima PRC 3W Dashboard</title>
+    <title>CRA Data Overview Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"> <!--href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css"> -->
@@ -13,75 +13,80 @@
     <script src="js/data.js"></script>
   </head>
   <body>
-    <div class ="col-sm-4 col-md-offset4" id="loading">
-        <h1>Loading... (~2.5MB)</h1><small>Does not work on IE8 or older</small>
-    </div>
     <div class="container" id="dashboard">
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
           <div class="row">
 			<div style="display:flex">
-				<img src="images/prc_logo.png" style="height: 80px; width: 80px; top: 50px">
+				<img src="images/510_GLOBAL_AN_INITITATIVE_OF_THE_NETHERLANDS_RED_CROSS-01.png" style="height: 80px; top: 50px">
 				<div>
-					<h3>Typhoon Haima<br>PRC 3W Dashboard</h3>
+					<h3>CRA Dashboard: Data Overview per country</h3>
 				</div>
 			</div>
-            <div class="col-xs-12">Explore What PRC does Where for Typhoon Haima.<br>Last update: 23 Nov 2016</div>
+			<!-- <div class="col-xs-12">Explore What PRC does Where for Typhoon Haima.<br>Last update: 25 Nov 2016</div> -->
             <div id="count-info" class="col-xs-10">
-              <span class="filter-count "></span> selected out of <span class="total-count "></span> activities
+              <span class="filter-count "></span> selected out of <span class="total-count "></span> sources
             </div>
             <div id="count-info" class="col-xs-2">
 			  <a style="background-color: #BF002D" class="btn btn-primary btn-sm" id="reset" href="javascript:dc.filterAll();dc.redrawAll();">Reset All</a>
             </div>
           </div>  
-		<hr>
-          <div class="row">
-            <div id="sectors" class="col-lg-6">
-              <h4>Sectors</h4>
-              <div class="col-xs-12"># of activities</div>
-            </div>
-			<div id="organisations" class="col-lg-6">
-				  <h4>Supported by</h4>
-				  <div class="col-xs-12"># of activities</div>
-			</div>
-		  </div>
-		  <div class="row">
-			<div class="col-lg-12">
-              <h4>Services provided and # beneficiaries (Select a sector to open.)</h4>
-              <div id="services" class="col-xs-12">
-				# of beneficiaries (Note that there are different types of beneficiaries: individuals, families, municipalities. Scroll down to the activities table for more information.)
-			  </div>
-			</div>
-		  </div>
 		</div>
-		<div id="map" class="col-lg-6">
-          <h3>Response area</h3><p><a href="javascript:municipalitiesMapShow();">Municipalities</a> - Provinces</p>
-        </div>
-        <div id="map2" class="col-lg-6">
-          <h3>Response area</h3><p>Municipalities - <a href="javascript:provincesMapShow();">Provinces</a></p>
-        </div>            
-      </div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="row">
+				<div id="countries" class="col-lg-3">
+					<h4>Pick 1 country ..</h4>
+					<div class="col-xs-12"># of sources</div>
+				</div>
+				<div id="admin_levels" class="col-lg-3">
+					<h4>.. and 1 admin-level</h4>
+					<div class="col-xs-12"># of sources</div>
+				</div>
+				<div class="scores col-lg-6">
+					<h4>Data Preparedness Index scores ..</h4>
+					<div class="col-xs-12">...</div>
+					<div class="row">
+						<div id="complete" class="score-chart col-lg-4"></div>
+					</div>
+					<div class="row">
+						<div id="recency" class="score-chart col-lg-4"></div>
+					</div>
+					<div class="row">
+						<div id="quality" class="score-chart col-lg-4"></div>
+					</div>
+				</div>
+				<div id="main">
+					<div id="sequence"></div>
+					<div id="chart">
+						<div id="explanation" style="visibility: hidden;">
+							<span id="percentage"></span><br/>
+							of visits begin with this sequence of pages
+						</div>
+					</div>
+				</div>
+			</div>  
+		</div>
+		
 	  <div class='row'>
 		<div class='span12'>
 		  <table class='table table-hover' id='dc-table-graph'>
 			<thead>
 			  <tr class='header'>
-				<th>Organisation</th>
-				<th>Sector</th>
-				<th>Subsector</th>
-				<th>Service provided</th>
-				<th>Province</th>
-				<th>Municipality</th>
-				<th>Barangay</th>
-				<th>Status</th>
-				<th>Beneficiaries</th>
-				<th>Beneficiary type</th>				
+				<th>INFORM 1</th>
+				<th>INFORM 2</th>
+				<th>INFORM 3</th>
+				<th>Variable</th>	
+				<th>Year</th>
+				<th>Link</th>		
 			  </tr>
 			</thead>
 		  </table>
 		</div>
 	  </div>
-      Created by Jannis Visser - JannisVisser(at)redcross(dot)nl - Skype: jannis.visser 
+      <!-- Created by Jannis Visser - JannisVisser(at)redcross(dot)nl - Skype: jannis.visser  -->
     </div>
     <script type="text/javascript" src="js/d3.js"></script>
     <script type="text/javascript" src="js/crossfilter.js"></script>
