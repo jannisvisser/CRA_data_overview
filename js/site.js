@@ -145,9 +145,7 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			var json = buildHierarchy(csv_base);
 			createVisualization(json);
 			
-		}
-		//test();
-		
+		}		
 		
 		country_chart.width(200).height(200)
 			.dimension(cf.country)
@@ -174,9 +172,8 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 					$('#main').hide();
 					$('.scores').hide();
 				};
-			})
-			;
-
+			});
+			
 		admin_level_chart.width(200).height(200)
 			.dimension(cf.admin_level)
 			.group(admin_level)
@@ -189,6 +186,8 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 				if (chart.filters().length == 1) { 
 					var admin_level = chart.filters()[0];
 					test(country_code,admin_level);
+					dc.redrawAll();
+					
 				}
 			})
 			;

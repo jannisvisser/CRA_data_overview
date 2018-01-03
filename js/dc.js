@@ -652,9 +652,10 @@ dc.baseChart = function (_chart) {
         else if (filters.length === 1)
             dimension.filter(filters[0]);
         else
-            dimension.filterFunction(function (d) {
-                return filters.indexOf(d) >= 0;
-            });
+			dimension.filter(filters[filters.length - 1])
+            // dimension.filterFunction(function (d) {
+                // return filters.indexOf(d) >= 0;
+            // });
 
         return filters;
     };
