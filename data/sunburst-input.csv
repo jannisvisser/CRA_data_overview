@@ -1,24 +1,22 @@
-Common Operational Datasets-Administrative boundaries-Administrative boundaries-yes,0.125
-Common Operational Datasets-Population-Population-yes,0.125
-Hazard & Exposure-Natural-Earthquake-yes,0.025
-Hazard & Exposure-Natural-Flood-yes,0.025
-Hazard & Exposure-Natural-Tsunami-yes,0.025
-Hazard & Exposure-Natural-Tropical Cyclone-yes,0.025
-Hazard & Exposure-Natural-Drought-yes,0.025
-Hazard & Exposure-Human-Projected Conflict Risk,0.0625
-Hazard & Exposure-Human-Current Highly Violent Conflict Intensity,0.0625
-Vulnerability-SocioEconomic Vulnerability-Development & Deprivation,0.0625
-Vulnerability-SocioEconomic Vulnerability-Inequality,0.03125
-Vulnerability-SocioEconomic Vulnerability-Aid Dependency,0.03125
-Vulnerability-Vulnerable Groups-Uprooted people,0.0625
-Vulnerability-Vulnerable Groups-Health Conditions,0.015625
-Vulnerability-Vulnerable Groups-Children U5,0.015625
-Vulnerability-Vulnerable Groups-Recent Shocks-yes,0.015625
-Vulnerability-Vulnerable Groups-Food Security,0.015625
-Lack of Coping Capacity-Institutional-DRR,0.0625
-Lack of Coping Capacity-Institutional-Governance-yes,0.0625
-Lack of Coping Capacity-Infrastructure-Communication,0.041666666625
-Lack of Coping Capacity-Infrastructure-Physical infrastructure-yes,0.041666666625
-Lack of Coping Capacity-Infrastructure-Access to health care-yes,0.041666666625
-
-
+CODs_Admin-boundaries_Admin-boundaries_yes,0.125
+CODs_Population_Population_yes,0.125
+Hazards_Natural_Earthquake,0.025
+Hazards_Natural_Flood,0.025
+Hazards_Natural_Tsunami,0.025
+Hazards_Natural_Tropical Cyclone,0.025
+Hazards_Natural_Drought,0.025
+Hazards_Human_Projected Conflict Risk,0.0625
+Hazards_Human_Current Highly Violent Conflict Intensity,0.0625
+Vulnerability_Socio-Economic Vulnerability_Development & Deprivation,0.0625
+Vulnerability_Socio-Economic Vulnerability_Inequality,0.03125
+Vulnerability_Socio-Economic Vulnerability_Aid Dependency,0.03125
+Vulnerability_Vulnerable Groups_Uprooted people,0.0625
+Vulnerability_Vulnerable Groups_Health Conditions,0.015625
+Vulnerability_Vulnerable Groups_Children U5,0.015625
+Vulnerability_Vulnerable Groups_Recent Shocks,0.015625
+Vulnerability_Vulnerable Groups_Food Security,0.015625
+Coping Capacity_Institutional_DRR,0.0625
+Coping Capacity_Institutional_Governance,0.0625
+Coping Capacity_Infrastructure_Communication,0.041666666625
+Coping Capacity_Infrastructure_Physical infrastructure,0.041666666625
+Coping Capacity_Infrastructure_Access to health care,0.041666666625
