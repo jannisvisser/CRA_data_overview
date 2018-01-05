@@ -28,7 +28,7 @@
               <span class="filter-count "></span> selected out of <span class="total-count "></span> sources
             </div>
             <div id="count-info" class="col-xs-2">
-			  <a style="background-color: #BF002D" class="btn btn-primary btn-sm" id="reset" href="javascript:dc.filterAll();dc.redrawAll();">Reset All</a>
+			  <a style="background-color: #CE3327" class="btn btn-primary btn-sm" id="reset" href="javascript:dc.filterAll();dc.redrawAll();">Reset All</a>
             </div>
           </div>  
 		</div>
@@ -58,14 +58,18 @@
 						<div id="quality" class="score-chart col-lg-4"></div>
 					</div>
 				</div>
-				<div id="main" class="col-lg-5">
+				<div id="main" class="col-lg-4">
 					<h4>Which INFORM-components are included?</h4>
 					<div id="sequence"></div>
 					<div id="chart">
 						<!-- <div id="explanation" style="visibility: hidden;"><span id="percentage"></span><br/></div> -->
 					</div>
 				</div>
-				
+				<div id="sidebar" class="col-lg-1">
+					<h4>Legend</h4>
+				    <!-- <input type="checkbox" id="togglelegend"> Legend<br/> -->
+				    <div id="legend" style="visibility: display;"></div>
+				</div>
 			</div>  
 		</div>
 	</div>	

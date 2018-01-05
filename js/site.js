@@ -1,3 +1,11 @@
+
+// var pg = require('pg');
+// var connectionString = 'postgresql://profiles:R3dCross+83@localhost/profiles';
+// var pgClient = new pg.Client(connectionString);
+// pgClient.connect();
+// var query = pgClient.query("SELECT count(*) from public.export");
+// console.log(query);
+
   
   ///////////////
  // SUNBURST ///
@@ -5,7 +13,7 @@
 
 
 // Dimensions of sunburst.
-var width = 800;
+var width = 700;
 var height = 300;
 var radius = Math.min(width, height) / 2;
 
@@ -16,44 +24,44 @@ var b = {
 
 // Mapping of step names to colors.
 var colors = {
-  //"Common Operational Datasets": "#5687d1",
-  "CODs": "#5687d1",
-  "Admin-boundaries": "#5687d1",
-  "Population": "#5687d1",
+  //"Common Operational Datasets": "#CE3327",
+  "CODs": "#CE3327",
+  "Admin-boundaries": "#CE3327",
+  "Population": "#CE3327",
  
-  //"Hazard & Exposure": "#7b615c",
-  "Hazards": "#7b615c",
-  "Natural": "#7b615c",
-  "Human": "#7b615c",
-  "Earthquake": "#7b615c",
-  "Flood": "#7b615c",
-  "Tsunami": "#7b615c",
-  "Tropical Cyclone": "#7b615c",
-  "Drought": "#7b615c",
-  "Projected Conflict Risk": "#7b615c",
-  "Current Highly Violent Conflict Intensity": "#7b615c",
+  //"Hazard & Exposure": "#fdbb57",
+  "Hazards": "#fdbb57",
+  "Natural": "#fdbb57",
+  "Human": "#fdbb57",
+  "Earthquake": "#fdbb57",
+  "Flood": "#fdbb57",
+  "Tsunami": "#fdbb57",
+  "Tropical Cyclone": "#fdbb57",
+  "Drought": "#fdbb57",
+  "Projected Conflict Risk": "#fdbb57",
+  "Current Highly Violent Conflict Intensity": "#fdbb57",
 
-  "Vulnerability": "#de783b",
-  "Socio-Economic Vulnerability": "#de783b",
-  "Vulnerable Groups": "#de783b",
-  "Development & Deprivation": "#de783b",
-  "Inequality": "#de783b",
-  "Aid Dependency": "#de783b",
-  "Uprooted people": "#de783b",
-  "Health Conditions": "#de783b",
-  "Children U5": "#de783b",
-  "Recent Shocks": "#de783b",
-  "Food Security": "#de783b",
+  "Vulnerability": "#386192",
+  "Socio-Economic Vulnerability": "#386192",
+  "Vulnerable Groups": "#386192",
+  "Development & Deprivation": "#386192",
+  "Inequality": "#386192",
+  "Aid Dependency": "#386192",
+  "Uprooted people": "#386192",
+  "Health Conditions": "#386192",
+  "Children U5": "#386192",
+  "Recent Shocks": "#386192",
+  "Food Security": "#386192",
   
-  //"Lack of Coping Capacity": "#6ab975",
-  "Coping Capacity": "#6ab975",
-  "Institutional": "#6ab975",
-  "Infrastructure": "#6ab975",
-  "DRR": "#6ab975",
-  "Governance": "#6ab975",
-  "Communication": "#6ab975",
-  "Physical infrastructure": "#6ab975",
-  "Access to health care": "#6ab975",
+  //"Lack of Coping Capacity": "#7e935b",
+  "Coping Capacity": "#7e935b",
+  "Institutional": "#7e935b",
+  "Infrastructure": "#7e935b",
+  "DRR": "#7e935b",
+  "Governance": "#7e935b",
+  "Communication": "#7e935b",
+  "Physical infrastructure": "#7e935b",
+  "Access to health care": "#7e935b",
   
   "yes": "#D3D3D3",
 };
@@ -97,13 +105,14 @@ var dataTable = dc.dataTable("#dc-table-graph");
 $('#admin_levels').hide();
 $('#dc-table-graph').hide();
 $('#main').hide();
+$('#sidebar').hide();
 $('.scores').hide();
 
 d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 	
 	d3.text("data/sunburst-input.csv", function(text) {
 		
-	    console.log(dpi_data_full);
+	    //console.log(dpi_data_full);
 		
 		var cf = crossfilter(dpi_data_full);
 		
@@ -123,6 +132,7 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 		
 		
 		initializeBreadcrumbTrail();
+		drawLegend();
 		var test = function(country_code,admin_level = 2) {
 			
 			cf.test = cf.dimension(function(d) { if (d.country_code == country_code && d.admin_level >= admin_level) { return d.inform_level1 + '_' + d.inform_level2 + '_' + d.inform_level3;} } );
@@ -154,7 +164,7 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			.data(function(group) {
 				return group.top(6);
 			})
-			.colors(['#BF002D'])
+			.colors(['#CE3327'])
 			.colorDomain([0,0])
 			.colorAccessor(function(d, i){return 1;})  
 			.label(function(d){return d.key || ': ' || d.value;})
@@ -166,10 +176,12 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 					$('#admin_levels').show();
 					$('#dc-table-graph').show();
 					$('#main').show();
+					$('#sidebar').show();
 				} else {
 					$('#admin_levels').hide();
 					$('#dc-table-graph').hide();
 					$('#main').hide();
+					$('#sidebar').hide();
 					$('.scores').hide();
 				};
 			});
@@ -178,7 +190,7 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			.dimension(cf.admin_level)
 			.group(admin_level)
 			.elasticX(true)
-			.colors(['#BF002D'])
+			.colors(['#CE3327'])
 			.colorDomain([0,0])
 			.colorAccessor(function(d, i){return 1;})  
 			.on('filtered',function(chart,filters){
@@ -298,7 +310,7 @@ function createVisualization(json) {
 				
   // Basic setup of page elements.
   //initializeBreadcrumbTrail();
-  drawLegend();
+  //drawLegend();
   d3.select("#togglelegend").on("click", toggleLegend);
 
   // Bounding circle underneath the sunburst, to make it easier to detect
@@ -469,15 +481,17 @@ function drawLegend() {
 
   // Dimensions of legend item: width, height, spacing, radius of rounded rect.
   var li = {
-    w: 75, h: 30, s: 3, r: 3
+    w: 100, h: 30, s: 3, r: 3
   };
 
   var legend = d3.select("#legend").append("svg:svg")
       .attr("width", li.w)
-      .attr("height", d3.keys(colors).length * (li.h + li.s));
+      .attr("height", 4 /*d3.keys(colors).length */ * (li.h + li.s));
+
+//console.log(d3.entries(colors).filter(function(d){return ['CODs','Hazards','Vulnerability','Coping Capacity'].indexOf(d.key) > -1;}));	  
 
   var g = legend.selectAll("g")
-      .data(d3.entries(colors))
+      .data(d3.entries(colors).filter(function(d){return ['CODs','Hazards','Vulnerability','Coping Capacity'].indexOf(d.key) > -1;}))
       .enter().append("svg:g")
       .attr("transform", function(d, i) {
               return "translate(0," + i * (li.h + li.s) + ")";
