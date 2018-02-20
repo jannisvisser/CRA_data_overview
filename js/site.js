@@ -143,6 +143,8 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			//var csv = [];
 			for (var j=0; j<csv_base.length;j++){
 				for (var i=0; i<test.top(Infinity).length;i++) {
+					console.log('1 ' + csv_base[j][0]);
+					console.log('2 ' + test.top(Infinity)[i].key);
 					if (csv_base[j][0] == test.top(Infinity)[i].key) {
 						csv_base[j][0] = csv_base[j][0] + '_yes';
 					}
