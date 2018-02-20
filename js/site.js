@@ -112,18 +112,18 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 	
 	d3.text("data/sunburst-input.csv", function(text) {
 		
-	    //console.log(dpi_data_full);
+	    console.log(dpi_data_full);
 		
 		var cf = crossfilter(dpi_data_full);
 		
-		cf.country = cf.dimension(function(d) {return d.country_code;});
+		cf.country = cf.dimension(function(d) {return d.country_name;});
 		cf.admin_level = cf.dimension(function(d) {return d.admin_level;});
 		cf.variable = cf.dimension(function(d) {return d.variable;});
 		cf.total = cf.dimension(function(d) {return 'Total';});
 		
 		 
-		var country = cf.country.group();
-		var admin_level = cf.admin_level.group();
+		var country = cf.country.group().reduceSum(function(d) {if (d.variable) {return 1;} else {return 0;};}); //group();
+		var admin_level = cf.admin_level.group().reduceSum(function(d) {if (d.variable) {return 1;} else {return 0;};}); //group();
 		var completeness = cf.total.group().reduceSum(function(d) {return d.weight_corr;});
 		var recency = cf.total.group().reduceSum(function(d) {return d.recency_corr;});
 		var quality = cf.total.group().reduceSum(function(d) {return d.quality_corr;});
@@ -136,22 +136,15 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 		var test = function(country_code,admin_level = 2) {
 			
 			cf.test = cf.dimension(function(d) { if (d.country_code == country_code && d.admin_level >= admin_level) { return d.inform_level1 + '_' + d.inform_level2 + '_' + d.inform_level3;} } );
-			var test = cf.test.group().reduceSum(function(d) {return d.weight_overall;})
+			var test = cf.test.group().reduceSum(function(d) { if (d.variable) { return d.weight_overall;};})
 			//console.log(test.top(Infinity));
 			
 			var csv_base = d3.csv.parseRows(text);
-			//var csv = [];
 			for (var j=0; j<csv_base.length;j++){
 				for (var i=0; i<test.top(Infinity).length;i++) {
-					console.log('1 ' + csv_base[j][0]);
-					console.log('2 ' + test.top(Infinity)[i].key);
-					if (csv_base[j][0] == test.top(Infinity)[i].key) {
+					if (csv_base[j][0] == test.top(Infinity)[i].key && test.top(Infinity)[i].value > 0) {
 						csv_base[j][0] = csv_base[j][0] + '_yes';
 					}
-					// var array = [];
-					// array[0] = test.top(Infinity)[i].key;
-					// array[1] = test.top(Infinity)[i].value;
-					// csv[i] = array;
 				}
 			}
 			var json = buildHierarchy(csv_base);
@@ -164,7 +157,7 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			.group(country)
 			.elasticX(true)
 			.data(function(group) {
-				return group.top(6);
+				return group.top(Infinity);
 			})
 			.colors(['#CE3327'])
 			.colorDomain([0,0])
@@ -176,15 +169,9 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 					country_code = chart.filters()[0];
 					test(country_code);
 					$('#admin_levels').show();
-					$('#dc-table-graph').show();
-					$('#main').show();
-					$('#sidebar').show();
 				} else {
 					$('#admin_levels').hide();
 					$('#dc-table-graph').hide();
-					$('#main').hide();
-					$('#sidebar').hide();
-					$('.scores').hide();
 				};
 			});
 			
@@ -192,6 +179,7 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			.dimension(cf.admin_level)
 			.group(admin_level)
 			.elasticX(true)
+			.ordering(function(d) {d.key})
 			.colors(['#CE3327'])
 			.colorDomain([0,0])
 			.colorAccessor(function(d, i){return 1;})  
@@ -200,8 +188,15 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 				if (chart.filters().length == 1) { 
 					var admin_level = chart.filters()[0];
 					test(country_code,admin_level);
+					$('#dc-table-graph').show();
+					//$('#main').show();
+					//$('#sidebar').show();
 					dc.redrawAll();
-					
+				} else {
+					$('#dc-table-graph').hide();
+					//$('#main').hide();
+					//$('#sidebar').hide();
+					//$('.scores').hide();
 				}
 			})
 			;
@@ -247,19 +242,17 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			.group(function(d) { return ""; })
 			.size(200)
 			.columns([
-			  //function(d) { return d.country_code; },
-			  //function(d) { return d.admin_level; },
 			  function(d) { return d.inform_level1; },
 			  function(d) { return d.inform_level2; },
 			  function(d) { return d.inform_level3; },
-			  function(d) { return d.label; },
+			  function(d) { return d.variable; },
 			  function(d) { return d.year; },
-			  function(d) { return "<a href='".concat(d.source_link).concat("' target='_blank'>Source link</a>"); }
+			  function(d) { if (d.variable) {return "<a href='".concat(d.source_link).concat("' target='_blank'>Source link</a>");} else { return '';};}
 			])
-			.order(d3.ascending)
 			.sortBy(function (d) {
-				return d.id_overall; //[d.inform_level1,d.inform_level2,d.inform_level3,d.label].join();
+				return d.id_overall; //d.inform_level1.concat(d.inform_level2.concat(d.inform_level3.concat(d.variable)));
 			})
+			.order(d3.ascending)
 			;
 			
 		
@@ -424,13 +417,22 @@ function initializeBreadcrumbTrail() {
 // Generate a string that describes the points of a breadcrumb polygon.
 function breadcrumbPoints(d, i) {
   var points = [];
-  points.push("0,0");
-  points.push(b.w + ",0");
-  points.push(b.w + b.t + "," + (b.h / 2));
-  points.push(b.w + "," + b.h);
-  points.push("0," + b.h);
+  if (i < 3) {
+	  points.push("0,0");
+	  points.push(b.w + ",0");
+	  points.push(b.w + b.t + "," + (b.h / 2));
+	  points.push(b.w + "," + b.h);
+	  points.push("0," + b.h);
+  }
   if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
     points.push(b.t + "," + (b.h / 2));
+  } 
+  if (i == 3) {
+	  points.push("0,0");
+	  points.push(b.w/4 + ",0");
+	  points.push(b.w/4 + b.t + "," + (b.h / 2));
+	  points.push(b.w/4 + "," + b.h);
+	  points.push("0," + b.h);
   }
   return points.join(" ");
 }
