@@ -1,10 +1,4 @@
 
-// var pg = require('pg');
-// var connectionString = 'postgresql://profiles:R3dCross+83@localhost/profiles';
-// var pgClient = new pg.Client(connectionString);
-// pgClient.connect();
-// var query = pgClient.query("SELECT count(*) from public.export");
-// console.log(query);
 
   
   ///////////////
@@ -108,16 +102,17 @@ $('#main').hide();
 $('#sidebar').hide();
 $('.scores').hide();
 
-d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
+//d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
+d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(dpi_data_full) {
+	
+	dpi_data_full = dpi_data_full.usp_data.metadata;
 	
 	d3.text("data/sunburst-input.csv", function(text) {
-		
-	    console.log(dpi_data_full);
-		
+				
 		var cf = crossfilter(dpi_data_full);
 		
-		cf.country = cf.dimension(function(d) {return d.country_name;});
-		cf.admin_level = cf.dimension(function(d) {return d.admin_level;});
+		cf.country = cf.dimension(function(d) {return d.country_name ? d.country_name : '' ;});
+		cf.admin_level = cf.dimension(function(d) {return d.admin_level ? d.admin_level : 0;});
 		cf.variable = cf.dimension(function(d) {return d.variable;});
 		cf.total = cf.dimension(function(d) {return 'Total';});
 		
@@ -152,6 +147,7 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			
 		}		
 		
+		var filter_through_reset = false;
 		country_chart.width(200).height(200)
 			.dimension(cf.country)
 			.group(country)
@@ -164,15 +160,20 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			.colorAccessor(function(d, i){return 1;})  
 			.label(function(d){return d.key || ': ' || d.value;})
 			.on('filtered',function(chart,filters){
-				if (chart.filters().length > 1) {chart.filters().shift();} 
-				if (chart.filters().length == 1) { 
-					country_code = chart.filters()[0];
-					test(country_code);
-					$('#admin_levels').show();
-				} else {
-					$('#admin_levels').hide();
-					$('#dc-table-graph').hide();
-				};
+				if (!filter_through_reset) {
+					if (chart.filters().length > 1) {chart.filters().shift();} 
+					if (chart.filters().length == 1) { 
+						country_code = chart.filters()[0];
+						cf.country.filter(function(d) {return d == country_code;});
+						test(country_code);
+						$('#admin_levels').show();
+					} else {
+						$('#admin_levels').hide();
+						$('#dc-table-graph').hide();
+						dc.filterAll();
+					};
+				}
+				
 			});
 			
 		admin_level_chart.width(200).height(200)
@@ -184,19 +185,24 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 			.colorDomain([0,0])
 			.colorAccessor(function(d, i){return 1;})  
 			.on('filtered',function(chart,filters){
-				if (chart.filters().length > 1) {chart.filters().shift();} 
-				if (chart.filters().length == 1) { 
-					var admin_level = chart.filters()[0];
-					test(country_code,admin_level);
-					$('#dc-table-graph').show();
-					//$('#main').show();
-					//$('#sidebar').show();
-					dc.redrawAll();
-				} else {
-					$('#dc-table-graph').hide();
-					//$('#main').hide();
-					//$('#sidebar').hide();
-					//$('.scores').hide();
+				if (!filter_through_reset) {
+					if (chart.filters().length > 1) {chart.filters().shift();} 
+					if (chart.filters().length == 1) { 
+						var admin_level = chart.filters()[0];
+						//test(country_code,admin_level);
+						cf.admin_level.filter(function(d) {return d == admin_level;});
+						dataTable.render();
+						dataTable.redraw();
+						$('#dc-table-graph').show();
+						//$('#main').show();
+						//$('#sidebar').show();
+						dc.redrawAll();
+					} else {
+						$('#dc-table-graph').hide();
+						//$('#main').hide();
+						//$('#sidebar').hide();
+						//$('.scores').hide();
+					}
 				}
 			})
 			;
@@ -262,6 +268,16 @@ d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
 		
 		
 		dc.renderAll();
+		
+		
+		reset = function(){
+			filter_through_reset = true;
+			dc.filterAll();
+			dc.redrawAll();
+			$('#admin_levels').hide();
+			$('#dc-table-graph').hide();
+			filter_through_reset = false;
+		}
 							   
 	})
 });
