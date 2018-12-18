@@ -145,6 +145,16 @@ d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Hai
         
         var all = cf.groupAll();
 		
+        function remove_empty_bins(source_group) {
+            return {
+                all:function () {
+                    return source_group.all().filter(function(d) {
+                        return d.value != 0;
+                    });
+                }
+            };
+        }
+        var filtered_country = remove_empty_bins(country);
 		
 		
 		initializeBreadcrumbTrail();
@@ -172,11 +182,11 @@ d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Hai
         
 		country_chart.width(200).height(300)
 			.dimension(cf.country)
-			.group(country)
+			.group(filtered_country)
 			.elasticX(true)
-			.data(function(group) {
-				return group.top(Infinity);
-			})
+			// .data(function(group) {
+				// return group.top(Infinity);
+			// })
 			.colors(['#CE3327'])
 			.colorDomain([0,0])
 			.colorAccessor(function(d, i){return 1;})  
