@@ -104,8 +104,8 @@ $('#sidebar').hide();
 $('.scores').hide();
 
 //d3.dsv(';')("data/CRA_metadata.csv", function(data){
-//d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(data) {
-d3.json("https://localhost:444/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(data) {
+d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(data) {
+//d3.json("https://localhost:444/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(data) {
     
 	dpi_data_full = data.usp_data.metadata;
     console.log(dpi_data_full);
