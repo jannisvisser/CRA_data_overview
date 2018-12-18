@@ -91,9 +91,10 @@ var country_code = '';
 var country_chart = dc.rowChart("#countries");
 var admin_level_chart = dc.rowChart("#admin_levels");
 var dataTable = dc.dataTable("#dc-table-graph");
-// var complete_chart = dc.rowChart('#complete');
-// var recency_chart = dc.rowChart('#recency');
-// var quality_chart = dc.rowChart('#quality');
+var complete_chart = dc.rowChart('#complete');
+var recency_chart = dc.rowChart('#recency');
+var quality_chart = dc.rowChart('#quality');
+var dpi_chart = dc.rowChart('#dpi');
 
 //Hide some charts initially
 $('#admin_levels').hide();
@@ -102,27 +103,47 @@ $('#main').hide();
 $('#sidebar').hide();
 $('.scores').hide();
 
-//d3.dsv(';')("data/CRA_metadata.csv", function(dpi_data_full){
-d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(dpi_data_full) {
-	
-	dpi_data_full = dpi_data_full.usp_data.metadata;
+//d3.dsv(';')("data/CRA_metadata.csv", function(data){
+//d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(data) {
+d3.json("https://localhost:444/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(data) {
+    
+	dpi_data_full = data.usp_data.metadata;
+    console.log(dpi_data_full);
+    dpi_scores = data.usp_data.scores;
 	
 	d3.text("data/sunburst-input.csv", function(text) {
 				
 		var cf = crossfilter(dpi_data_full);
+        //var cf_scores = crossfilter(dpi_scores);
 		
 		cf.country = cf.dimension(function(d) {return d.country_name ? d.country_name : '' ;});
 		cf.admin_level = cf.dimension(function(d) {return d.admin_level ? d.admin_level : 0;});
 		cf.variable = cf.dimension(function(d) {return d.variable;});
-		cf.total = cf.dimension(function(d) {return 'Total';});
-		
+		cf.total = cf.dimension(function(d) {return 'Total';});		
 		 
 		var country = cf.country.group().reduceSum(function(d) {if (d.variable) {return 1;} else {return 0;};}); //group();
 		var admin_level = cf.admin_level.group().reduceSum(function(d) {if (d.variable) {return 1;} else {return 0;};}); //group();
-		var completeness = cf.total.group().reduceSum(function(d) {return d.weight_corr;});
-		var recency = cf.total.group().reduceSum(function(d) {return d.recency_corr;});
-		var quality = cf.total.group().reduceSum(function(d) {return d.quality_corr;});
-		var all = cf.groupAll();
+		
+        var completeness = cf.total.group().reduceSum(function(d) {return d.weight_corr;});
+		// var recency = cf.total.group().reduceSum(function(d) {return d.recency_score;});
+		// var quality = cf.total.group().reduceSum(function(d) {return d.quality_score;});
+        var recency = cf.total.group().reduce(
+				function(p,v) {p.weight += v.weight_corr; p.recency_temp += v.recency_score; p.recency = p.recency_temp/p.weight; return p; }, 
+				function(p,v) {p.weight -= v.weight_corr; p.recency_temp -= v.recency_score; p.recency = p.recency_temp/p.weight; return p; }, 
+				function() { return { weight: 0, recency_temp: 0, recency: 0}; }
+			);
+        var quality = cf.total.group().reduce(
+				function(p,v) {p.weight += v.weight_corr; p.quality_temp += v.quality_score; p.quality = p.quality_temp/p.weight; return p; }, 
+				function(p,v) {p.weight -= v.weight_corr; p.quality_temp -= v.quality_score; p.quality = p.quality_temp/p.weight; return p; }, 
+				function() { return { weight: 0, quality_temp: 0, quality: 0}; }
+			);
+        var dpi = cf.total.group().reduce(
+				function(p,v) {p.weight += v.weight_corr; p.quality_temp += v.quality_score; p.recency_temp += v.recency_score; p.dpi = p.recency_temp*p.quality_temp/p.weight; return p; }, 
+				function(p,v) {p.weight -= v.weight_corr; p.quality_temp -= v.quality_score; p.recency_temp -= v.recency_score; p.dpi = p.recency_temp*p.quality_temp/p.weight; return p; }, 
+				function() { return { weight: 0, recency_temp: 0, quality_temp: 0, dpi: 0}; }
+            );
+        
+        var all = cf.groupAll();
 		
 		
 		
@@ -148,7 +169,8 @@ d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Hai
 		}		
 		
 		var filter_through_reset = false;
-		country_chart.width(200).height(200)
+        
+		country_chart.width(200).height(300)
 			.dimension(cf.country)
 			.group(country)
 			.elasticX(true)
@@ -168,15 +190,18 @@ d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Hai
 						test(country_code);
 						$('#admin_levels').show();
 					} else {
-						$('#admin_levels').hide();
-						$('#dc-table-graph').hide();
-						dc.filterAll();
+                        reset();
+						// dc.filterAll();
+                        // dc.redrawAll();
+						// $('#admin_levels').hide();
+                        // $('.scores').hide();
+						// $('#dc-table-graph').hide();
 					};
 				}
 				
 			});
 			
-		admin_level_chart.width(200).height(200)
+		admin_level_chart.width(200).height(300)
 			.dimension(cf.admin_level)
 			.group(admin_level)
 			.elasticX(true)
@@ -194,6 +219,7 @@ d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Hai
 						dataTable.render();
 						dataTable.redraw();
 						$('#dc-table-graph').show();
+                        $('.scores').show();
 						//$('#main').show();
 						//$('#sidebar').show();
 						dc.redrawAll();
@@ -201,44 +227,63 @@ d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Hai
 						$('#dc-table-graph').hide();
 						//$('#main').hide();
 						//$('#sidebar').hide();
-						//$('.scores').hide();
+						$('.scores').hide();
 					}
 				}
 			})
 			;
 		
-		// complete_chart.width(200).height(50)
-			// .margins({top: 0, left: 0, right: 0, bottom: 0})
-			// .dimension(cf.total)
-			// .group(completeness)
-			// .colors(['#BF002D'])
-			// .colorDomain([0,0])
-			// .colorAccessor(function(d, i){return 1;}) 
-			// .label(function(d){return 'Completeness: '.concat(Math.round(d.value*100)/100);})
-			// .x(d3.scale.linear().range([0,(complete_chart.width()-50)]).domain([0,1]))
-			// ;
-		// recency_chart.width(200).height(50)
-			// .margins({top: 0, left: 0, right: 0, bottom: 0})
-			// .dimension(cf.total)
-			// .group(recency)
-			// .colors(['#BF002D'])
-			// .colorDomain([0,0])
-			// .colorAccessor(function(d, i){return 1;}) 
-			// .label(function(d){return 'Recency: '.concat(Math.round(d.value*100)/100);})
-			// .x(d3.scale.linear().range([0,(recency_chart.width()-50)]).domain([0,1]))
-			// ;
-		// quality_chart.width(200).height(50)
-			// .margins({top: 0, left: 0, right: 0, bottom: 0})
-			// .dimension(cf.total)
-			// .group(quality)
-			// .colors(['#BF002D'])
-			// .colorDomain([0,0])
-			// .colorAccessor(function(d, i){return 1;}) 
-			// .label(function(d){return 'Quality: '.concat(Math.round(d.value*100)/100);})
-			// .elasticX(false)
-			// .x(d3.scale.linear().range([0,(quality_chart.width()-50)]).domain([0,1]))
-			//.xAxis().scale(quality_chart.x())
-			// ;	
+		complete_chart.width(200).height(50)
+			.margins({top: 0, left: 0, right: 0, bottom: 0})
+			.dimension(cf.total)
+			.group(completeness)
+			.colors(['#CE3327'])
+			.colorDomain([0,0])
+			.colorAccessor(function(d, i){return 1;}) 
+			.label(function(d){return 'Completeness: '.concat(Math.round(d.value*100)/100);})
+			.x(d3.scale.linear().range([0,(complete_chart.width()-50)]).domain([0,1]))
+			;
+            
+		recency_chart.width(200).height(50)
+			.margins({top: 0, left: 0, right: 0, bottom: 0})
+			.dimension(cf.total)
+			.group(recency)
+            .valueAccessor(function(d){ return d.value.recency; })
+			.colors(['#CE3327'])
+			.colorDomain([0,0])
+			.colorAccessor(function(d, i){return 1;}) 
+			.label(function(d){return 'Recency: '.concat(Math.round(d.value.recency*100)/100);})
+			.x(d3.scale.linear().range([0,(recency_chart.width()-50)]).domain([0,1]))
+			;
+            
+		quality_chart.width(200).height(50)
+			.margins({top: 0, left: 0, right: 0, bottom: 0})
+			.dimension(cf.total)
+			.group(quality)
+            .valueAccessor(function(d){ return d.value.quality; })
+			.colors(['#CE3327'])
+			.colorDomain([0,0])
+			.colorAccessor(function(d, i){return 1;}) 
+			.label(function(d){return 'Quality: '.concat(Math.round(d.value.quality*100)/100);})
+			.elasticX(false)
+			.x(d3.scale.linear().range([0,(quality_chart.width()-50)]).domain([0,1]))
+			.xAxis().scale(quality_chart.x())
+			;	
+            
+        dpi_chart.width(200).height(50)
+			.margins({top: 0, left: 0, right: 0, bottom: 0})
+			.dimension(cf.total)
+			.group(dpi)
+            .valueAccessor(function(d){ return d.value.dpi; })
+			.colors(['#CE3327'])
+			.colorDomain([0,0])
+			.colorAccessor(function(d, i){return 1;}) 
+			.label(function(d){return 'DPI: '.concat(Math.round(d.value.dpi*100)/100);})
+			.elasticX(false)
+			.x(d3.scale.linear().range([0,(quality_chart.width()-50)]).domain([0,1]))
+			.xAxis().scale(quality_chart.x())
+			;    
+            
 
 
 			
@@ -276,6 +321,7 @@ d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Hai
 			dc.redrawAll();
 			$('#admin_levels').hide();
 			$('#dc-table-graph').hide();
+            $('.scores').hide();
 			filter_through_reset = false;
 		}
 							   
