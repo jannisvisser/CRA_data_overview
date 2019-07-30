@@ -104,12 +104,10 @@ $('#sidebar').hide();
 $('.scores').hide();
 
 //d3.dsv(';')("data/CRA_metadata.csv", function(data){
-d3.json("https://dashboard.510.global/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(data) {
-//d3.json("https://localhost:444/data/2,'PHL','%7B%7D','CRA','Typhoon','Haima'",function(data) {
-    
-	dpi_data_full = data.usp_data.metadata;
-    console.log(dpi_data_full);
-    dpi_scores = data.usp_data.scores;
+d3.json("https://dashboard.510.global/data/all?admlevel=2&country=PHL&parent_codes=%7B%7D&view=CRA",function(data) {
+//d3.json("https://localhost:8008/data/all?admlevel=2&country=PHL&parent_codes=%7B%7D&view=CRA",function(data) {
+    dpi_data_full = data[0].usp_data.metadata;
+    dpi_scores = data[0].usp_data.scores;
 	
 	d3.text("data/sunburst-input.csv", function(text) {
 				
